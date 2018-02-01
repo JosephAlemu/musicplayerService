@@ -64,19 +64,12 @@
                     android:background="@drawable/rewind"/>
 
                 <Button
-                    android:id="@+id/btnPause"
+                    android:id="@+id/btnPlay"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_margin="5dp"
                     android:background="@drawable/pause"/>
 
-                <Button
-                    android:id="@+id/btnPlay"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/play"
-                    android:visibility="gone"/>
 
                 <Button
                     android:id="@+id/btnNext"
