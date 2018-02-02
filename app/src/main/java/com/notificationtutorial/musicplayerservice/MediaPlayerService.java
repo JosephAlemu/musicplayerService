@@ -11,6 +11,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.IBinder;
@@ -33,15 +34,15 @@ public class MediaPlayerService extends Service {
     public static final String NOTIFY_PAUSE = "pause";
     public static final String NOTIFY_PLAY = "play";
     public static final String NOTIFY_NEXT = "next";
+    public static final String NOTIFY_MAIN = "mainactivity";
 
 
+    private static int count = 0;
 
-    private static  int count =  0;
+    Context c;
 
 
-
-
-    public static Intent getPauseIntent(Context context,boolean isPlaying) {
+    public static Intent getPauseIntent(Context context, boolean isPlaying) {
 
         Intent intent = new Intent(context, MediaPlayerService.class);
         intent.setAction(MediaPlayerService.NOTIFY_PAUSE);
@@ -49,7 +50,7 @@ public class MediaPlayerService extends Service {
         return intent;
     }
 
-    public static Intent getStartIntent(Context context,boolean isPlaying) {
+    public static Intent getStartIntent(Context context, boolean isPlaying) {
 
         Intent intent = new Intent(context, MediaPlayerService.class);
         intent.setAction(MediaPlayerService.NOTIFY_PLAY);
@@ -57,10 +58,19 @@ public class MediaPlayerService extends Service {
         return intent;
     }
 
-    public static Intent getDeleteIntent(Context context,boolean isPlaying) {
+    public static Intent getDeleteIntent(Context context, boolean isPlaying) {
         izPlaying = isPlaying;
         Intent intent = new Intent(context, MediaPlayerService.class);
         intent.setAction(MediaPlayerService.NOTIFY_DELETE);
+        return intent;
+    }
+
+    public Intent getBackToMain(Context context) {
+        c = context;
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.setAction(MediaPlayerService.NOTIFY_MAIN);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        // context.startActivity(intent);
         return intent;
     }
 
@@ -69,11 +79,10 @@ public class MediaPlayerService extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId)
-    {
+    public int onStartCommand(Intent intent, int flags, int startId) {
         String action = intent.getAction();
 
-        if(NOTIFY_PLAY.equalsIgnoreCase(action))
+        if (NOTIFY_PLAY.equalsIgnoreCase(action))
             playMedia();
 
         else if (NOTIFY_PAUSE.equalsIgnoreCase(action))
@@ -81,13 +90,19 @@ public class MediaPlayerService extends Service {
 
         else if (NOTIFY_DELETE.equalsIgnoreCase(action))
             handleStop();
+        else if (NOTIFY_MAIN.equalsIgnoreCase(action)) {
+            Intent newintent = new Intent(c, MainActivity.class);
+            newintent.setFlags(newintent.FLAG_ACTIVITY_NEW_TASK);
+            c.startActivity(newintent);
+        }
+
 
         return START_NOT_STICKY;
     }
 
     private void handleStart() {
 
-        mediaPlayer = MediaPlayer.create(getApplicationContext(),R.raw.rockabye);
+        mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.rockabye);
 
         displayStatusMessage("Service starting");
     }
@@ -95,15 +110,12 @@ public class MediaPlayerService extends Service {
     private void handleStop() {
 
         stopMedia();
-        stopForeground(true);
         stopSelf();
         displayStatusMessage("Service stopping");
     }
 
     private void handlePause() {
-
-
-        displayStatusMessage("Service stopping");
+        displayStatusMessage("Service pausing");
     }
 
     private void displayStatusMessage(String message) {
@@ -112,11 +124,9 @@ public class MediaPlayerService extends Service {
     }
 
 
+    public void customBigNotification(Context context) {
 
-    public void customBigNotification(Context context, boolean isPlaying) {
-
-        izPlaying = isPlaying;
-        int NOTIFY_ID= 2;
+        int NOTIFY_ID = 2;
         String CHANNEL_ID = "4565";
         NotificationManager notificationManager;
 
@@ -153,7 +163,6 @@ public class MediaPlayerService extends Service {
         notificationViews.setOnClickPendingIntent(R.id.btnPlay, stopPendingIntent);
 
 
-
         ///  start intent setup
         Intent intentStart = new Intent(context, MediaPlayerService.class);
         intentStart.setAction(MainActivity.START_ACTION);
@@ -164,90 +173,94 @@ public class MediaPlayerService extends Service {
         notificationViews.setOnClickPendingIntent(R.id.btnPlay, startPendingIntent);
 
 
-       //Intent intent1 = new Intent(context, MainActivity.class);
-      //    PendingIntent pendingIntent = PendingIntent.getActivity(context, 123, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent intent1 = new Intent(context, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent1, 0);
 
 
-
-        NotificationCompat.Builder  builder = new NotificationCompat.Builder(context, "ID");
-
-        Intent pause = getPauseIntent(context,isPlaying);
-
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "ID");
 
         builder.setSmallIcon(R.drawable.play)
-                 .setContent(notificationViews)
-              //   .setContentIntent(pendingIntent)
-                 .setAutoCancel(true)
-                 .setChannelId(CHANNEL_ID)
-                 .setContentTitle("Music Player")
-                 .setContentText("Control Audio");
-        setListeners(notificationViews,context);
+                .setContent(notificationViews)
+                //   .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setChannelId(CHANNEL_ID)
+                .setContentTitle("Music Player")
+                .setContentText("Control Audio");
+        setListeners(notificationViews, context);
         Notification notification = builder.build();
 
         notificationManager.notify(NOTIFY_ID, notification);
 
     }
 
-    private  void setListeners(RemoteViews view, Context context) {
-        Intent previous =   getPauseIntent(context,izPlaying);
-        Intent delete =   getDeleteIntent(context,izPlaying);
-        Intent pause = getPauseIntent(context,izPlaying);
-        Intent next = getPauseIntent(context,izPlaying);
-        Intent play = getStartIntent(context,izPlaying);
+    private void setListeners(RemoteViews view, Context context) {
+        Intent previous = getPauseIntent(context, izPlaying);
+        Intent delete = getDeleteIntent(context, izPlaying);
+        Intent pause = getPauseIntent(context, izPlaying);
+        Intent next = getPauseIntent(context, izPlaying);
+        Intent play = getStartIntent(context, izPlaying);
+        Intent mainactivity = getBackToMain(context);
 
 
         PendingIntent pDelete = PendingIntent.getService(context, 0, delete, 0);
         view.setOnClickPendingIntent(R.id.btnDelete, pDelete);
-
 
         PendingIntent pNext = PendingIntent.getService(context, 0, next, 0);
         view.setOnClickPendingIntent(R.id.btnNext, pNext);
 
 
 
-            PendingIntent pPause = PendingIntent.getService(context, 0, pause, 0);
-            view.setOnClickPendingIntent(R.id.btnPlay, pPause);
+        PendingIntent pPlay = PendingIntent.getService(context, 0, play, 0);
+        view.setOnClickPendingIntent(R.id.btnPlay, pPlay);
 
 
+        PendingIntent pPause = PendingIntent.getService(context, 0, pause, 0);
+        view.setOnClickPendingIntent(R.id.btnPlay, pPlay);
 
-            PendingIntent pPlay = PendingIntent.getService(context, 0, play, 0);
-            view.setOnClickPendingIntent(R.id.btnPlay, pPlay);
-
+        PendingIntent pmainactivity = PendingIntent.getService(context, 0, mainactivity, 0);
+        view.setOnClickPendingIntent(R.id.ivAlbum, pmainactivity);
 
 
     }
-    private void playMedia() {
-     /// single instance of music object
-      if (count == 0){
-           handleStart();
-          count++;
-      }
 
-        if (!izPlaying&&resumePosition!=0) {
+    private void playMedia() {
+        /// single instance of music object
+        if (count == 0) {
+            handleStart();
+            count++;
+        }
+
+        if (!izPlaying && resumePosition != 0) {
             resumeMedia();
 
-        }
-        else if (!izPlaying&&resumePosition==0) {
+        } else if (!izPlaying && resumePosition == 0) {
 
             mediaPlayer.start();
+        } else{
+            mediaPlayer.pause();
         }
     }
 
-    private void stopMedia( ) {
+    private void stopMedia() {
         if (mediaPlayer == null) return;
         if (izPlaying) {
             mediaPlayer.stop();
         }
+
     }
 
-    private void pauseMedia( ) {
+    private void pauseMedia() {
         if (izPlaying) {
             mediaPlayer.pause();
             resumePosition = mediaPlayer.getCurrentPosition();
+        } else if(!izPlaying && resumePosition != 0){
+
+            resumeMedia();
         }
 
 
     }
+
     private void resumeMedia() {
         if (!izPlaying) {
             mediaPlayer.seekTo(resumePosition);

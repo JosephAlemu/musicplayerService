@@ -126,6 +126,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onPause() {
         super.onPause();
         MediaPlayerService mediaPlayerService = new MediaPlayerService();
-        mediaPlayerService.customBigNotification(getApplicationContext(),isplaying);
+        mediaPlayerService.customBigNotification(getApplicationContext());
     }
 }
