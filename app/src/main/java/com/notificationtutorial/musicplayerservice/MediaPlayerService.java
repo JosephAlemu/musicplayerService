@@ -21,7 +21,7 @@ import android.widget.Toast;
 /**
  * Created by joseph alemu
  */
-public class SimpleKittyService extends Service {
+public class MediaPlayerService extends Service {
 
 
     private static boolean izPlaying;
@@ -43,24 +43,24 @@ public class SimpleKittyService extends Service {
 
     public static Intent getPauseIntent(Context context,boolean isPlaying) {
 
-        Intent intent = new Intent(context, SimpleKittyService.class);
-        intent.setAction(SimpleKittyService.NOTIFY_PAUSE);
+        Intent intent = new Intent(context, MediaPlayerService.class);
+        intent.setAction(MediaPlayerService.NOTIFY_PAUSE);
         izPlaying = isPlaying;
         return intent;
     }
 
     public static Intent getStartIntent(Context context,boolean isPlaying) {
 
-        Intent intent = new Intent(context, SimpleKittyService.class);
-        intent.setAction(SimpleKittyService.NOTIFY_PLAY);
+        Intent intent = new Intent(context, MediaPlayerService.class);
+        intent.setAction(MediaPlayerService.NOTIFY_PLAY);
         izPlaying = isPlaying;
         return intent;
     }
 
     public static Intent getDeleteIntent(Context context,boolean isPlaying) {
         izPlaying = isPlaying;
-        Intent intent = new Intent(context, SimpleKittyService.class);
-        intent.setAction(SimpleKittyService.NOTIFY_DELETE);
+        Intent intent = new Intent(context, MediaPlayerService.class);
+        intent.setAction(MediaPlayerService.NOTIFY_DELETE);
         return intent;
     }
 
@@ -145,7 +145,7 @@ public class SimpleKittyService extends Service {
 
 
         ///  stop intent setup
-        Intent intentStop = new Intent(context, SimpleKittyService.class);
+        Intent intentStop = new Intent(context, MediaPlayerService.class);
         intentStop.setAction(MainActivity.STOP_ACTION);
 
         PendingIntent stopPendingIntent =
@@ -155,7 +155,7 @@ public class SimpleKittyService extends Service {
 
 
         ///  start intent setup
-        Intent intentStart = new Intent(context, SimpleKittyService.class);
+        Intent intentStart = new Intent(context, MediaPlayerService.class);
         intentStart.setAction(MainActivity.START_ACTION);
 
 
@@ -184,9 +184,7 @@ public class SimpleKittyService extends Service {
         setListeners(notificationViews,context);
         Notification notification = builder.build();
 
-
         notificationManager.notify(NOTIFY_ID, notification);
-
 
     }
 
@@ -198,12 +196,8 @@ public class SimpleKittyService extends Service {
         Intent play = getStartIntent(context,izPlaying);
 
 
-
-
         PendingIntent pDelete = PendingIntent.getService(context, 0, delete, 0);
         view.setOnClickPendingIntent(R.id.btnDelete, pDelete);
-
-
 
 
         PendingIntent pNext = PendingIntent.getService(context, 0, next, 0);
@@ -218,7 +212,6 @@ public class SimpleKittyService extends Service {
 
             PendingIntent pPlay = PendingIntent.getService(context, 0, play, 0);
             view.setOnClickPendingIntent(R.id.btnPlay, pPlay);
-
 
 
 

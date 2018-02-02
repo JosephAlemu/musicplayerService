@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
 
-        <service android:enabled="true" android:name=".SimpleKittyService" />
+        <service android:enabled="true" android:name=".MediaPlayerService" />
 
     </application>
 

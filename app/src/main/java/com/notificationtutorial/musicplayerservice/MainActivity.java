@@ -1,6 +1,5 @@
 package com.notificationtutorial.musicplayerservice;
 
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,13 +9,10 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
-import android.widget.RemoteViews;
 import android.widget.SeekBar;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -60,63 +56,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnNext.setOnClickListener(this);
 
 
-//        seekBar.setMax(mediaPlayer.getDuration());
-
-         setUp();
-
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                if (b){
-//                    mediaPlayer.seekTo(i);
-                }
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
 
     }
-    public void setUp() {
 
-        notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), "id_product");
-        notificationBuilder.setAutoCancel(true);
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-            // The user-visible name of the channel.
-            CharSequence name = "Product";
-            // The user-visible description of the channel.
-            String description = "Notifications regarding our products";
-
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel mChannel = new NotificationChannel(id, name, importance);
-            // Configure the notification channel.
-            mChannel.setDescription(description);
-            mChannel.enableLights(true);
-            // Sets the notification light color for notifications posted to this
-            // channel, if the device supports this feature.
-            mChannel.setLightColor(Color.RED);
-            notificationManager.createNotificationChannel(mChannel);
-
-
-        } else {
-
-            notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-
-        }
-    }
     @Override
     public void onClick(View view) {
         switch (view.getId()){
@@ -140,20 +82,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-
     private void btnStartServiceOnClick() {
         Context context = getApplicationContext();
         btnPlay.setBackgroundResource(R.drawable.pause);
-        Intent intent = SimpleKittyService.getStartIntent(context,!isplaying);
+        Intent intent = MediaPlayerService.getStartIntent(context,!isplaying);
 
-      startService(intent);
+        startService(intent);
 
     }
 
     private void btnPauseServiceOnClick() {
         Context context = getApplicationContext();
         btnPlay.setBackgroundResource(R.drawable.play);
-        Intent intent = SimpleKittyService.getPauseIntent(context,!isplaying);
+        Intent intent = MediaPlayerService.getPauseIntent(context,!isplaying);
         startService(intent);
 
     }
@@ -184,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onPause() {
         super.onPause();
-        SimpleKittyService simpleKittyService = new SimpleKittyService();
-        simpleKittyService.customBigNotification(getApplicationContext(),isplaying);
+        MediaPlayerService mediaPlayerService = new MediaPlayerService();
+        mediaPlayerService.customBigNotification(getApplicationContext(),isplaying);
     }
 }
