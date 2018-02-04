@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     Button btnPrevious;
-    Button  btnPlay;
+    Button btnPlay;
     Button btnNext;
     SeekBar seekBar;
     MediaPlayer mediaPlayer;
@@ -39,16 +39,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-         context = this;
+        context = this;
 
 //        mediaPlayer = new MediaPlayer();
 //        mediaPlayer = MediaPlayer.create(getApplicationContext(),R.raw.rockabye);
 
 
-        btnPrevious = (Button)findViewById(R.id.btnPrevious);
-        btnPlay = (Button)findViewById(R.id.btnPlay);
-        btnNext = (Button)findViewById(R.id.btnNext);
-        seekBar = (SeekBar)findViewById(R.id.seekBar);
+        btnPrevious = (Button) findViewById(R.id.btnPrevious);
+        btnPlay = (Button) findViewById(R.id.btnPlay);
+        btnNext = (Button) findViewById(R.id.btnNext);
+        seekBar = (SeekBar) findViewById(R.id.seekBar);
 
 
         btnPlay.setOnClickListener(this);
@@ -56,23 +56,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnNext.setOnClickListener(this);
 
 
-
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
 
             case R.id.btnPlay:
-                if (isplaying){
-                    isplaying = false;
-                    btnPauseServiceOnClick();
-
-                }else{
-                    isplaying = true;
-                    btnStartServiceOnClick();
-
-                }
+                startService();
                 break;
             case R.id.btnNext:
                 break;
@@ -83,19 +74,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void btnStartServiceOnClick() {
-        Context context = getApplicationContext();
-        btnPlay.setBackgroundResource(R.drawable.pause);
-        Intent intent = MediaPlayerService.getStartIntent(context,!isplaying);
-
-        startService(intent);
+//        Context context = getApplicationContext();
+//        btnPlay.setBackgroundResource(R.drawable.pause);
+//        Intent intent = MediaPlayerService.getStartIntent(context, !isplaying);
+//
+//        startService(intent);
 
     }
 
     private void btnPauseServiceOnClick() {
-        Context context = getApplicationContext();
-        btnPlay.setBackgroundResource(R.drawable.play);
-        Intent intent = MediaPlayerService.getPauseIntent(context,!isplaying);
-        startService(intent);
+//        Context context = getApplicationContext();
+//        btnPlay.setBackgroundResource(R.drawable.play);
+//        Intent intent = MediaPlayerService.getPauseIntent(context, !isplaying);
+//        startService(intent);
 
     }
 
@@ -103,29 +94,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void notificationMethod() {
 
 
-            Intent intent1 = new Intent(getApplicationContext(), MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 123, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent intent1 = new Intent(getApplicationContext(), MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 123, intent1, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            notificationBuilder.setSmallIcon(R.drawable.play) // icon
-                    .setBadgeIconType(R.drawable.album) //  icon
-                    .setChannelId(id)
-                    .setContentTitle("Notification Title ")
-                    .setAutoCancel(true)
-                    .setContentIntent(pendingIntent)
-                    .setNumber(1)
-                    .setColor(255)
-                    .setContentText("Hello there you just clicked notification, peace")
-                    .setWhen(System.currentTimeMillis());
-            notificationManager.notify(1, notificationBuilder.build());
-
+        notificationBuilder.setSmallIcon(R.drawable.play) // icon
+                .setBadgeIconType(R.drawable.album) //  icon
+                .setChannelId(id)
+                .setContentTitle("Notification Title ")
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+                .setNumber(1)
+                .setColor(255)
+                .setContentText("Hello there you just clicked notification, peace")
+                .setWhen(System.currentTimeMillis());
+        notificationManager.notify(1, notificationBuilder.build());
 
 
     }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        MediaPlayerService mediaPlayerService = new MediaPlayerService();
+//        mediaPlayerService.customBigNotification(getApplicationContext());
+//    }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        MediaPlayerService mediaPlayerService = new MediaPlayerService();
-        mediaPlayerService.customBigNotification(getApplicationContext());
+    public void startService() {
+        Intent serviceIntent = new Intent(MainActivity.this, MediaPlayerService.class);
+        serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+        startService(serviceIntent);
     }
 }

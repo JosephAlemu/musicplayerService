@@ -59,7 +59,13 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_margin="5dp"
-                    android:background="@drawable/rewind" />
+                    android:background="@drawable/skip_backward" />
+                <Button
+                    android:id="@+id/btnPause"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/pause" />
 
                 <Button
                     android:id="@+id/btnPlay"
@@ -73,7 +79,7 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_margin="5dp"
-                    android:background="@drawable/fast" />
+                    android:background="@drawable/skip_forward" />
 
 
             </LinearLayout>
@@ -84,7 +90,41 @@
                 android:layout_height="wrap_content"
                 android:background="#fff"/>
 
+            <LinearLayout
+                android:id="@+id/textarea"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical">
 
+                <TextView
+                    android:id="@+id/status_bar_track_name"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:ellipsize="marquee"
+                    android:fadingEdge="horizontal"
+                    android:textColor="#fff"
+                    android:focusable="true"
+                    android:singleLine="true" />
+
+                <TextView
+                    android:id="@+id/status_bar_artist_name"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:textColor="#fff"
+                    android:maxLines="1" />
+
+                <TextView
+                    android:id="@+id/status_bar_album_name"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:textColor="#fff"
+                    android:maxLines="1" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
